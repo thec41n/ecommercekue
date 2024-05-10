@@ -3,7 +3,8 @@ import asyncHandler from "../middlewares/asyncHandler.js";
 import bcrypt from "bcryptjs";
 import createToken from "../utils/createToken.js";
 
-const createUser = asyncHandler(async (req, res) => {
+// Create User
+const createUser = asyncHandler(async(req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -33,7 +34,8 @@ const createUser = asyncHandler(async (req, res) => {
   }
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+// Login User
+const loginUser = asyncHandler(async(req, res) => {
   const { email, password } = req.body;
 
   const existingUser = await User.findOne({ email });
@@ -57,4 +59,20 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { createUser, loginUser };
+// Logout User
+const logoutCurrentUser = asyncHandler(async(req, res) => {
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+
+  res.status(200).json({message: "Berhasil Log out"});
+})
+
+// Get All Users
+const getAllUsers = asyncHandler(async(req, res) => {
+  const users = await User.find({})
+  res.json(users);
+})
+
+export { createUser, loginUser, logoutCurrentUser, getAllUsers };
