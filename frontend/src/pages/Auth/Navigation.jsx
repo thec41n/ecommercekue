@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AiOutlineHome,
   AiOutlineShopping,
@@ -25,6 +25,10 @@ const Navigation = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const closeDropdown = () => {
+    setDropdownOpen(false);
+  };
+
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };
@@ -46,6 +50,18 @@ const Navigation = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  useEffect(() => {
+    window.addEventListener("click", closeDropdown);
+
+    return () => {
+      window.removeEventListener("click", closeDropdown);
+    };
+  });
+
+  const dropdownClickHandler = (e) => {
+    e.stopPropagation();
   };
 
   return (
@@ -87,7 +103,7 @@ const Navigation = () => {
         </Link>
       </div>
 
-      <div className="relative">
+      <div className="relative" onClick={dropdownClickHandler}>
         <button
           onClick={toggleDropdown}
           className="flex items-center text-gray-8000 focus:outline-none"
@@ -123,6 +139,7 @@ const Navigation = () => {
             className={`absolute right-0 mt-2 mr-14 space-y-2 bg-white text-gray-600 ${
               !userInfo.isAdmin ? "-top-20" : "-top-80"
             } `}
+            onClick={(e) => e.stopPropagation()}
           >
             {userInfo.isAdmin && (
               <>
@@ -169,10 +186,7 @@ const Navigation = () => {
               </>
             )}
             <li>
-              <Link
-                to="/profile"
-                className="block px-4 py-2 hover:bg-gray-100"
-              >
+              <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">
                 Profile
               </Link>
             </li>

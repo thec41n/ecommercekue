@@ -82,7 +82,8 @@ const Login = () => {
             <button
               disabled={isLoading}
               type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
+              className="text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
+              style={{ backgroundColor: "#eb9534" }}
             >
               {isLoading ? "Signing In..." : "Sign In"}
             </button>
@@ -91,10 +92,11 @@ const Login = () => {
 
           <div className="mt-4">
             <div className="text-black">
-              Pengguna Baru ?{" "}
+              Pengguna Baru?{" "}
               <Link
                 to={redirect ? `/register?redirect=${redirect}` : "/register"}
-                className="text-green-500 hover:underline"
+                className="hover:underline"
+                style={{ color: "#eb9534" }}
               >
                 Register
               </Link>
