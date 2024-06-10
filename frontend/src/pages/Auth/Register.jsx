@@ -32,7 +32,7 @@ const Register = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Mohon konfirmasi password");
+      toast.error("Password tidak sesuai!");
     } else {
       try {
         const res = await register({ username, email, password }).unwrap();
@@ -64,7 +64,7 @@ const Register = () => {
               type="text"
               id="name"
               className="mt-1 p-2 border rounded w-full"
-              placeholder="Enter Name"
+              placeholder="Masukkan username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
@@ -82,7 +82,7 @@ const Register = () => {
               type="email"
               id="email"
               className="mt-1 p-2 border rounded w-full"
-              placeholder="Enter Email"
+              placeholder="Masukkan email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -100,7 +100,7 @@ const Register = () => {
               type="password"
               id="password"
               className="mt-1 p-2 border rounded w-full"
-              placeholder="Enter Password"
+              placeholder="Masukkan password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -118,7 +118,7 @@ const Register = () => {
               type="password"
               id="password"
               className="mt-1 p-2 border rounded w-full"
-              placeholder="Confirm Password"
+              placeholder="Konfirmasi password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
             />

@@ -58,6 +58,7 @@ const Login = () => {
                 type="email"
                 id="email"
                 className="mt-1 p-2 border rounded w-full"
+                placeholder="Masukkan email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -75,6 +76,7 @@ const Login = () => {
                 type="password"
                 id="password"
                 className="mt-1 p-2 border rounded w-full"
+                placeholder="Masukkan password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
