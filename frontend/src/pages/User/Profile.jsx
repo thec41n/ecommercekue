@@ -77,7 +77,7 @@ const Profile = () => {
             </div>
 
             <div className="mb-4 relative">
-              <label className="block text-black">Password</label>
+              <label className="block text-black mb-2">Password</label>
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Masukkan password"
@@ -95,7 +95,7 @@ const Profile = () => {
             </div>
 
             <div className="mb-4 form-input-container">
-              <label className="block text-black">Confirm Password</label>
+              <label className="block text-black mb-2">Confirm Password</label>
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="Konfirmasi password"
