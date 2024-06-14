@@ -4,8 +4,8 @@ const router = express.Router();
 
 import {
   addProduct,
-  // updateProductDetails,
-  // removeProduct,
+  updateProductDetails,
+  deleteProduct,
   // fetchProducts,
   // fetchProductById,
   // fetchAllProducts,
@@ -19,7 +19,13 @@ import checkId from "../middlewares/checkId.js";
 
 router
   .route("/")
-//   .get(fetchProducts)
+  // .get(fetchProducts)
   .post(authenticate, authorizeAdmin, formidable(), addProduct);
+
+router
+  .route("/:id")
+  // .get(fetchProductById)
+  .put(authenticate, authorizeAdmin, formidable(), updateProductDetails)
+  .delete(authenticate, authorizeAdmin, deleteProduct);
 
 export default router;

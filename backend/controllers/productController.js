@@ -30,15 +30,60 @@ const addProduct = asyncHandler(async (req, res) => {
   }
 });
 
+const updateProductDetails = asyncHandler(async (req, res) => {
+  try {
+    const { name, description, price, category, quantity, brand } = req.fields;
+
+    // Validation
+    switch (true) {
+      case !name:
+        return res.json({ error: "Tolong isi field nama!" });
+      case !brand:
+        return res.json({ error: "Tolong isi field brand!" });
+      case !description:
+        return res.json({ error: "Tolong isi field deskripsi!" });
+      case !price:
+        return res.json({ error: "Tolong isi field harga!" });
+      case !category:
+        return res.json({ error: "Tolong isi field kategori!" });
+      case !quantity:
+        return res.json({ error: "Tolong isi field kuantitas!" });
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { ...req.fields },
+      { new: true }
+    );
+
+    await product.save();
+
+    res.json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json(error.message);
+  }
+});
+
+const deleteProduct = asyncHandler(async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    res.json({ message: "Produk berhasil dihapus", product });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 export {
   addProduct,
-//   updateProductDetails,
-//   removeProduct,
-//   fetchProducts,
-//   fetchProductById,
-//   fetchAllProducts,
-//   addProductReview,
-//   fetchTopProducts,
-//   fetchNewProducts,
-//   filterProducts,
+  updateProductDetails,
+  deleteProduct,
+  //   fetchProducts,
+  //   fetchProductById,
+  //   fetchAllProducts,
+  //   addProductReview,
+  //   fetchTopProducts,
+  //   fetchNewProducts,
+  //   filterProducts,
 };
