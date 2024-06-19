@@ -1,13 +1,27 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
 
 const AdminMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
@@ -29,7 +43,7 @@ const AdminMenu = () => {
       </button>
 
       {isMenuOpen && (
-        <section className="bg-[#151515] p-4 fixed right-7 top-5">
+        <section ref={menuRef} className="bg-[#151515] p-4 fixed right-7 top-5">
           <ul className="list-none mt-2">
             <li>
               <NavLink
@@ -61,13 +75,13 @@ const AdminMenu = () => {
                   color: isActive ? "orange" : "white",
                 })}
               >
-                Jajanan
+                Tambah Jajanan
               </NavLink>
             </li>
             <li>
               <NavLink
                 className="list-item py-2 px-3 block mb-5 hover:bg-[#2E2D2D] rounded-sm"
-                to="/admin/allproducts"
+                to="/admin/allproductslist"
                 style={({ isActive }) => ({
                   color: isActive ? "orange" : "white",
                 })}

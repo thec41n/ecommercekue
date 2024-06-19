@@ -16,27 +16,13 @@ const ProductList = () => {
   const [category, setCategory] = useState("");
   const [quantity, setQuantity] = useState("");
   const [brand, setBrand] = useState("");
-  const [stock, setStock] = useState(0);
+  const [stock, setStock] = useState("");
   const [imageUrl, setImageUrl] = useState(null);
   const navigate = useNavigate();
 
   const [uploadProductImage] = useUploadProductImageMutation();
   const [createProduct] = useCreateProductMutation();
   const { data: categories } = useFetchCategoriesQuery();
-
-  const uploadFileHandler = async (e) => {
-    const formData = new FormData();
-    formData.append("image", e.target.files[0]);
-
-    try {
-      const res = await uploadProductImage(formData).unwrap();
-      toast.success(res.message);
-      setImage(res.image);
-      setImageUrl(res.image);
-    } catch (error) {
-      toast.error(error?.data?.message || error.error);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,8 +47,21 @@ const ProductList = () => {
         navigate("/");
       }
     } catch (error) {
-      console.error(error);
       toast.error("Produk gagal ditambahkan, coba lagi!.");
+    }
+  };
+
+  const uploadFileHandler = async (e) => {
+    const formData = new FormData();
+    formData.append("image", e.target.files[0]);
+
+    try {
+      const res = await uploadProductImage(formData).unwrap();
+      toast.success(res.message);
+      setImage(res.image);
+      setImageUrl(res.image);
+    } catch (error) {
+      toast.error(error?.data?.message || error.error);
     }
   };
 
@@ -169,8 +168,10 @@ const ProductList = () => {
                 <select
                   placeholder="Choose Category"
                   className="p-4 mb-3 w-[30rem] border rounded-lg text-black"
+                  value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 >
+                  <option value="">Pilih Kategori</option>
                   {categories?.map((c) => (
                     <option key={c._id} value={c._id}>
                       {c.name}

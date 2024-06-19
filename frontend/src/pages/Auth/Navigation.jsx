@@ -156,7 +156,7 @@ const Navigation = () => {
                     to="/admin/productlist"
                     className="block px-4 py-2 hover:bg-gray-100"
                   >
-                    Jajanan
+                    Tambah Jajanan
                   </Link>
                 </li>
                 <li>
