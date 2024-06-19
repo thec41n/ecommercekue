@@ -49,10 +49,10 @@ const ProductUpdate = () => {
     formData.append("image", e.target.files[0]);
     try {
       const res = await uploadProductImage(formData).unwrap();
-      toast.success("Gambar berhasil diupload!");
+      toast.success(res.message);
       setImage(res.image);
-    } catch (err) {
-      toast.success("Gambar berhasil diupload!");
+    } catch (error) {
+      toast.error(error?.data?.message || error.error);
     }
   };
 
@@ -75,7 +75,7 @@ const ProductUpdate = () => {
       if (data.error) {
         toast.error("Produk gagal ditambahkan, coba lagi!");
       } else {
-        toast.success(`${data.name} berhasil diupdate!`);
+        toast.success(`${name} berhasil diupdate!`);
         navigate("/admin/allproductslist");
       }
     } catch (error) {
