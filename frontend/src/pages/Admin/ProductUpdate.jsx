@@ -36,7 +36,7 @@ const ProductUpdate = () => {
       setName(productData.name);
       setDescription(productData.description);
       setPrice(productData.price);
-      setCategory(productData.category?._id);
+      setCategory(productData.category);
       setQuantity(productData.quantity);
       setBrand(productData.brand);
       setStock(productData.countInStock || 0);
