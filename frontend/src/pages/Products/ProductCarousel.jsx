@@ -56,55 +56,58 @@ const ProductCarousel = () => {
               rating,
               quantity,
               countInStock,
-            }) => (
-              <div key={_id}>
-                <img
-                  src={image}
-                  alt={name}
-                  className="w-full rounded-lg object-cover h-[30rem]"
-                />
+            }) => {
+              const formattedPrice = price.toLocaleString('id-ID');
+              return (
+                <div key={_id}>
+                  <img
+                    src={image}
+                    alt={name}
+                    className="w-full rounded-lg object-cover h-[30rem]"
+                  />
 
-                <div className="mt-4 flex justify-between">
-                  <div className="one">
-                    <h2>{name}</h2>
-                    <p> Rp {price}</p> <br /> <br />
-                    <p className="w-[25rem]">
-                      {description.substring(0, 170)}...
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between w-[20rem]">
+                  <div className="mt-4 flex justify-between">
                     <div className="one">
-                      <h1 className="flex items-center mb-6">
-                        <FaStore className="mr-2 text-black" /> Merk: {brand}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaClock className="mr-2 text-black" /> Ditambahkan: {" "}
-                        {moment(createdAt).fromNow()}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaStar className="mr-2 text-black" /> Ulasan: {numReviews}
-                      </h1>
+                      <h2>{name}</h2>
+                      <p>Rp {formattedPrice}</p> <br /> <br />
+                      <p className="w-[25rem]">
+                        {description.substring(0, 170)}...
+                      </p>
                     </div>
 
-                    <div className="two">
-                      <h1 className="flex items-center mb-6">
-                        <FaStar className="mr-2 text-black" /> Rating:{" "}
-                        {Math.round(rating)}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaShoppingCart className="mr-2 text-black" />{" "}
-                        Kuantitas: {quantity}
-                      </h1>
-                      <h1 className="flex items-center mb-6 w-[9rem]">
-                        <FaBox className="mr-2 text-black" /> Stok Barang:{" "}
-                        {countInStock}
-                      </h1>
+                    <div className="flex justify-between w-[20rem]">
+                      <div className="one">
+                        <h1 className="flex items-center mb-6">
+                          <FaStore className="mr-2 text-black" /> Merk: {brand}
+                        </h1>
+                        <h1 className="flex items-center mb-6">
+                          <FaClock className="mr-2 text-black" /> Ditambahkan: {" "}
+                          {moment(createdAt).fromNow()}
+                        </h1>
+                        <h1 className="flex items-center mb-6">
+                          <FaStar className="mr-2 text-black" /> Ulasan: {numReviews}
+                        </h1>
+                      </div>
+
+                      <div className="two">
+                        <h1 className="flex items-center mb-6">
+                          <FaStar className="mr-2 text-black" /> Rating:{" "}
+                          {Math.round(rating)}
+                        </h1>
+                        <h1 className="flex items-center mb-6">
+                          <FaShoppingCart className="mr-2 text-black" />{" "}
+                          Kuantitas: {quantity}
+                        </h1>
+                        <h1 className="flex items-center mb-6 w-[9rem]">
+                          <FaBox className="mr-2 text-black" /> Stok Barang:{" "}
+                          {countInStock}
+                        </h1>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )
+              );
+            }
           )}
         </Slider>
       )}

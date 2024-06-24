@@ -13,7 +13,9 @@ const Favorites = () => {
 
       <div className="flex flex-wrap">
         {favorites.map((product) => (
-          <Product key={product._id} product={product} />
+          <div key={product._id} className="w-1/3">
+            <Product product={product} />
+          </div>
         ))}
       </div>
     </div>

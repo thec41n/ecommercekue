@@ -35,7 +35,7 @@ const ProductUpdate = () => {
     if (productData && productData._id) {
       setName(productData.name);
       setDescription(productData.description);
-      setPrice(productData.price);
+      setPrice(productData.price.toLocaleString("id-ID")); // Format price
       setCategory(productData.category);
       setQuantity(productData.quantity);
       setBrand(productData.brand);
@@ -43,6 +43,16 @@ const ProductUpdate = () => {
       setImage(productData.image);
     }
   }, [productData]);
+
+  const formatNumber = (number) => {
+    return number.toLocaleString("id-ID");
+  };
+
+  const handlePriceChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, ""); // Remove all non-digit characters
+    const formattedValue = formatNumber(Number(rawValue));
+    setPrice(formattedValue);
+  };
 
   const uploadFileHandler = async (e) => {
     const formData = new FormData();
@@ -58,12 +68,27 @@ const ProductUpdate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      !image ||
+      !name ||
+      !description ||
+      !price ||
+      !category ||
+      !quantity ||
+      !brand ||
+      !stock
+    ) {
+      toast.error("Produk gagal ditambahkan, coba lagi!.");
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append("image", image);
       formData.append("name", name);
       formData.append("description", description);
-      formData.append("price", price);
+      formData.append("price", price.replace(/\./g, ""));
       formData.append("category", category);
       formData.append("quantity", quantity);
       formData.append("brand", brand);
@@ -85,9 +110,7 @@ const ProductUpdate = () => {
 
   const handleDelete = async () => {
     try {
-      let answer = window.confirm(
-        "Apakah kamu yakin ingin menghapus?"
-      );
+      let answer = window.confirm("Apakah kamu yakin ingin menghapus?");
       if (!answer) return;
 
       const { data } = await deleteProduct(params._id);
@@ -146,11 +169,11 @@ const ProductUpdate = () => {
               <div className="two ml-10 ">
                 <label htmlFor="name block">Harga</label> <br />
                 <input
-                  type="number"
+                  type="text"
                   className="p-4 mb-3 w-[30rem] border rounded-lg text-black"
-                  placeholder="co: 15000"
+                  placeholder="co: 15.000"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={handlePriceChange}
                 />
               </div>
             </div>

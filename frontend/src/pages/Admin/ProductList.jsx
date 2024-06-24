@@ -24,6 +24,16 @@ const ProductList = () => {
   const [createProduct] = useCreateProductMutation();
   const { data: categories } = useFetchCategoriesQuery();
 
+  const formatNumber = (number) => {
+    return number.toLocaleString('id-ID');
+  };
+
+  const handlePriceChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, ''); // Remove all non-digit characters
+    const formattedValue = formatNumber(Number(rawValue));
+    setPrice(formattedValue);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -32,7 +42,7 @@ const ProductList = () => {
       productData.append("image", image);
       productData.append("name", name);
       productData.append("description", description);
-      productData.append("price", price);
+      productData.append("price", price.replace(/\./g, '')); // Remove dots for saving as number
       productData.append("category", category);
       productData.append("quantity", quantity);
       productData.append("brand", brand);
@@ -111,11 +121,11 @@ const ProductList = () => {
               <div className="two ml-10 ">
                 <label htmlFor="name block">Harga</label> <br />
                 <input
-                  type="number"
+                  type="text"
                   className="p-4 mb-3 w-[30rem] border rounded-lg text-black"
-                  placeholder="co: 15000"
+                  placeholder="co: 15.000"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={handlePriceChange}
                 />
               </div>
             </div>
