@@ -165,7 +165,7 @@ const Shop = () => {
           </div>
 
           <div className="p-3">
-            <h2 className="h4 text-center mb-2">{products?.length} Produk</h2>
+            <h2 className="h4 text-center mb-2 font-bold">{products?.length} Produk</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {products.length === 0 ? (
                 <Loader />

@@ -100,7 +100,7 @@ const ProductDetails = () => {
               </p>
 
               <p className="text-5xl my-4 font-extrabold">
-                Rp {product.price.toLocaleString('id-ID')}
+                Rp {product.price.toLocaleString("id-ID")}
               </p>
 
               <div className="flex items-center justify-between w-[20rem]">
@@ -111,7 +111,7 @@ const ProductDetails = () => {
                   </h1>
                   <h1 className="flex items-center mb-6 w-[20rem]">
                     <FaClock className="mr-2 text-black" /> Ditambahkan pada:{" "}
-                    {moment(product.createAt).fromNow()}
+                    {moment(product.createdAt).fromNow()}
                   </h1>
                   <h1 className="flex items-center mb-6">
                     <FaStar className="mr-2 text-black" /> Reviews:{" "}
@@ -121,7 +121,8 @@ const ProductDetails = () => {
 
                 <div className="two">
                   <h1 className="flex items-center mb-6">
-                    <FaStar className="mr-2 text-black" /> Rating: {Math.round(product.rating)}
+                    <FaStar className="mr-2 text-black" /> Rating:{" "}
+                    {Math.round(product.rating)}
                   </h1>
                   <h1 className="flex items-center mb-6">
                     <FaShoppingCart className="mr-2 text-black" /> Kuantitas:{" "}
