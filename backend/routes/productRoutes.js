@@ -12,7 +12,7 @@ import {
   addProductReview,
   fetchTopProducts,
   fetchNewProducts,
-  // filterProducts,
+  filterProducts,
 } from "../controllers/productController.js";
 import { authenticate, authorizeAdmin } from "../middlewares/authMiddleware.js";
 import checkId from "../middlewares/checkId.js";
@@ -34,5 +34,7 @@ router
   .get(fetchProductById)
   .put(authenticate, authorizeAdmin, formidable(), updateProductDetails)
   .delete(authenticate, authorizeAdmin, deleteProduct);
+
+router.route("/filtered-products").post(filterProducts);
 
 export default router;
