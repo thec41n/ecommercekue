@@ -114,7 +114,7 @@ const ProductDetails = () => {
                     {moment(product.createdAt).fromNow()}
                   </h1>
                   <h1 className="flex items-center mb-6">
-                    <FaStar className="mr-2 text-black" /> Reviews:{" "}
+                    <FaStar className="mr-2 text-black" /> Ulasan:{" "}
                     {product.numReviews}
                   </h1>
                 </div>
