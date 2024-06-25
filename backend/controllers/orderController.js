@@ -9,18 +9,18 @@ function calcPrices(orderItems) {
   );
 
   const shippingPrice = itemsPrice > 100 ? 0 : 10;
-  const taxRate = 0.15;
-  const taxPrice = (itemsPrice * taxRate).toFixed(2);
+  const taxRate = 0.11;
+  const taxPrice = (itemsPrice * taxRate);
 
   const totalPrice = (
     itemsPrice +
     shippingPrice +
     parseFloat(taxPrice)
-  ).toFixed(2);
+  );
 
   return {
-    itemsPrice: itemsPrice.toFixed(2),
-    shippingPrice: shippingPrice.toFixed(2),
+    itemsPrice: itemsPrice,
+    shippingPrice: shippingPrice,
     taxPrice,
     totalPrice,
   };

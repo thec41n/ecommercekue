@@ -156,7 +156,7 @@ const Shop = () => {
 
             <div className="p-5 pt-0">
               <button
-                className="w-full my-4 bg-orange-600 text-white rounded-full"
+                className="w-full my-4 bg-orange-600 hover:bg-orange-700 text-white rounded-full"
                 onClick={() => window.location.reload()}
               >
                 Reset
