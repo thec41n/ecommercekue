@@ -79,7 +79,7 @@ const Navigation = () => {
       <div className="flex flex-col justify-center space-y-4">
         <div className="flex justify-center items-center mt-4">
           <img src={logo} alt="Logo" className="w-10 h-10" />
-          <span className="hidden nav-item-name ml-2">Kue Yanti</span>
+          <span className="hidden nav-item-name ml-2">KUE YANTI</span>
         </div>
         <Link
           to="/"
@@ -89,7 +89,7 @@ const Navigation = () => {
           <span className="hidden nav-item-name mt-[3rem]">HOME</span>{" "}
         </Link>
         <Link
-          to="/aboutus"
+          to="/about"
           className="flex items-center transition-transform transform hover:translate-x-2"
         >
           <IoIosInformationCircleOutline className="mr-2 mt-[3rem]" size={26} />
@@ -166,7 +166,7 @@ const Navigation = () => {
         {dropdownOpen && userInfo && (
           <ul
             className={`absolute right-0 mt-2 mr-14 space-y-2 bg-white text-gray-600 ${
-              !userInfo.isAdmin ? "-top-20" : "-top-80 -mt-9"
+              !userInfo.isAdmin ? "-top-20" : "-top-80 -mt-10"
             } `}
             onClick={(e) => e.stopPropagation()}
           >
