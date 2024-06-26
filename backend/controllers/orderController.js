@@ -1,5 +1,6 @@
 import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
+import midtrans from "../config/midtransConfig.js";
 
 // Utility Function
 function calcPrices(orderItems) {
@@ -57,8 +58,7 @@ const createOrder = async (req, res) => {
       };
     });
 
-    const { itemsPrice, taxPrice, shippingPrice, totalPrice } =
-      calcPrices(dbOrderItems);
+    const { itemsPrice, taxPrice, shippingPrice, totalPrice } = calcPrices(dbOrderItems);
 
     const order = new Order({
       orderItems: dbOrderItems,
@@ -72,8 +72,36 @@ const createOrder = async (req, res) => {
     });
 
     const createdOrder = await order.save();
-    res.status(201).json(createdOrder);
+
+    // Midtrans transaction parameters
+    const parameter = {
+      transaction_details: {
+        order_id: createdOrder._id.toString(),
+        gross_amount: totalPrice,
+      },
+      customer_details: {
+        first_name: req.user.username,
+        email: req.user.email,
+      },
+    };
+
+    try {
+      const midtransTransaction = await midtrans.createTransaction(parameter);
+      createdOrder.paymentResult = {
+        token: midtransTransaction.token,
+        redirect_url: midtransTransaction.redirect_url,
+      };
+
+      await createdOrder.save();
+
+      res.status(201).json(createdOrder);
+    } catch (midtransError) {
+      console.error("Midtrans API Error:", midtransError.ApiResponse);
+      res.status(500).json({ error });
+    }
+
   } catch (error) {
+    console.error("Error:", error);
     res.status(500).json({ error: error.message });
   }
 };
