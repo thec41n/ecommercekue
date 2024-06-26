@@ -8,6 +8,7 @@ import {
   AiOutlineShop,
 } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
+import { IoIosInformationCircleOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import "./Navigation.css";
@@ -15,6 +16,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLogoutMutation } from "../../redux/api/usersApiSlice";
 import { logout } from "../../redux/features/auth/authSlice";
 import FavoritesCount from "../Products/FavoritesCount";
+import logo from "../../img/cakeLogin.jpg";
 
 const Navigation = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -71,16 +73,27 @@ const Navigation = () => {
       style={{ zIndex: 999 }}
       className={`${
         showSidebar ? "hidden" : "flex"
-      } xl:flex lg:flex md:hidden sm:hidden flex-col justify-between p-4 text-white bg-[#000] w-[4%] hover:w-[15%] h-[100vh]  fixed `}
+      } xl:flex lg:flex md:hidden sm:hidden flex-col justify-between p-4 text-white bg-[#000] w-[4%] hover:w-[15%] h-[100vh] fixed `}
       id="navigation-container"
     >
       <div className="flex flex-col justify-center space-y-4">
+        <div className="flex justify-center items-center mt-4">
+          <img src={logo} alt="Logo" className="w-10 h-10" />
+          <span className="hidden nav-item-name ml-2">Kue Yanti</span>
+        </div>
         <Link
           to="/"
           className="flex items-center transition-transform transform hover:translate-x-2"
         >
           <AiOutlineHome className="mr-2 mt-[3rem]" size={26} />
           <span className="hidden nav-item-name mt-[3rem]">HOME</span>{" "}
+        </Link>
+        <Link
+          to="/aboutus"
+          className="flex items-center transition-transform transform hover:translate-x-2"
+        >
+          <IoIosInformationCircleOutline className="mr-2 mt-[3rem]" size={26} />
+          <span className="hidden nav-item-name mt-[3rem]">ABOUT US</span>
         </Link>
         <Link
           to="/shop"
@@ -108,8 +121,7 @@ const Navigation = () => {
         </Link>
         <Link to="/favorite" className="flex relative">
           <div
-            className="flex justify-center items-center transition-transform transform
-          hover:translate-x-2"
+            className="flex items-center ml-1 transition-transform transform hover:translate-x-2"
           >
             <FaHeart className="mt-[3rem] mr-2" size={20} />
             <span className="hidden nav-item-name mt-[3rem]">
