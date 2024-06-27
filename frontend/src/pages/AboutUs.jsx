@@ -53,34 +53,34 @@ const AboutUs = () => {
       <div style={styles.content}>
         <h1 style={styles.headingInfo}>Informasi</h1>
         <h2 style={styles.heading}>Alamat</h2>
-        <p>Jl. Gelatik No 85 Blok F, Tangerang Selatan, Banten</p>
+        <p>Jl.Stasiun No.15, Depok, Jawa Barat</p>
 
         <h2 style={styles.heading}>Phone</h2>
-        <p>+62 81263035236</p>
+        <p>+62 8952315537</p>
 
         <h2 style={styles.heading}>Contact Person</h2>
-        <p>WhatsApp: +62 81263035236</p>
-        <p>Instagram: @Mecha.id</p>
-        <p>Facebook: MechaId</p>
+        <p>WhatsApp: +62 8952315537</p>
+        <p>Instagram: @kue.yanti</p>
+        <p>Facebook: Kue Yanti</p>
 
         <h2 style={styles.heading}>Open Hours</h2>
         <p>Senin - Jumat: 8:00 WIB - 17:00 WIB</p>
-        <p>Sabtu: 8:00 WIB - 15:00 WIB</p>
+        <p>Sabtu: 8:00 WIB - 12:00 WIB</p>
       </div>
       <footer style={styles.footer}>
         <div style={styles.footerContent}>
           <div style={styles.footerSection}>
             <p style={styles.footerText}>
-              ©Mecha.id 2023. All Rights Reserved.
+              ©Kue Yanti 2024. All Rights Reserved.
             </p>
             <p style={styles.footerText}>
-              Alamat: Jl. Gelatik No 85 Blok F, Tangerang Selatan, Banten
+              Alamat: Jl.Stasiun No.15, Depok, Jawa Barat
             </p>
           </div>
           <div style={styles.footerSection}>
             <p style={styles.footerText}>Social Media:</p>
-            <p style={styles.footerText}>Facebook: MechaId</p>
-            <p style={styles.footerText}>Instagram: Mecha.Id</p>
+            <p style={styles.footerText}>Instagram: @kue.yanti</p>
+            <p style={styles.footerText}>Facebook: Kue Yanti</p>
           </div>
         </div>
       </footer>
