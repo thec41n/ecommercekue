@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Message from "../../components/Message";
@@ -8,7 +7,6 @@ import Loader from "../../components/Loader";
 import {
   useDeliverOrderMutation,
   useGetOrderDetailsQuery,
-  useGetPaypalClientIdQuery,
   usePayOrderMutation,
 } from "../../redux/api/orderApiSlice";
 
@@ -27,65 +25,43 @@ const Order = () => {
     useDeliverOrderMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
-  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-
-  const {
-    data: paypal,
-    isLoading: loadingPayPal,
-    error: errorPayPal,
-  } = useGetPaypalClientIdQuery();
-
-  useEffect(() => {
-    if (!errorPayPal && !loadingPayPal && paypal.clientId) {
-      const loadingPayPalScript = async () => {
-        paypalDispatch({
-          type: "resetOptions",
-          value: {
-            "client-id": paypal.clientId,
-            currency: "IDR",
-          },
-        });
-        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
-      };
-
-      if (order && !order.isPaid) {
-        if (!window.paypal) {
-          loadingPayPalScript();
+  const handlePayment = () => {
+    if (order && !order.isPaid && order.paymentResult && order.paymentResult.token) {
+      window.snap.pay(order.paymentResult.token, {
+        onSuccess: async (result) => {
+          try {
+            await payOrder({ orderId, details: result });
+            refetch();
+            toast.success("Pesanan sudah dibayar");
+          } catch (error) {
+            console.error("Payment error:", error);
+            toast.error(error?.data?.message || error.message);
+          }
+        },
+        onPending: function(result) {
+          console.log("Payment pending:", result);
+        },
+        onError: function(result) {
+          console.log("Payment error:", result);
+          toast.error("Pembayaran gagal");
+        },
+        onClose: function() {
+          console.log("Customer closed the popup without finishing the payment");
         }
-      }
-    }
-  }, [errorPayPal, loadingPayPal, order, paypal, paypalDispatch]);
-
-  function onApprove(data, actions) {
-    return actions.order.capture().then(async function (details) {
-      try {
-        await payOrder({ orderId, details });
-        refetch();
-        toast.success("Pesanan sudah dibayar");
-      } catch (error) {
-        toast.error(error?.data?.message || error.message);
-      }
-    });
-  }
-
-  function createOrder(data, actions) {
-    return actions.order
-      .create({
-        purchase_units: [{ amount: { value: order.totalPrice } }],
-      })
-      .then((orderID) => {
-        return orderID;
       });
-  }
-
-  function onError(err) {
-    toast.error(err.message);
-  }
+    }
+  };
 
   const deliverHandler = async () => {
     await deliverOrder(orderId);
     refetch();
   };
+
+  useEffect(() => {
+    if (order && order.isPaid) {
+      refetch();
+    }
+  }, [order?.isPaid, refetch]);
 
   return isLoading ? (
     <Loader />
@@ -159,7 +135,7 @@ const Order = () => {
           <p className="mb-4">
             <strong className="text-black-500">Alamat:</strong>{" "}
             {order.shippingAddress.address}, {order.shippingAddress.city}{" "}
-            {order.shippingAddress.postalCode}, {order.shippingAddress.country}
+            {order.shippingAddress.postalCode}, {order.shippingAddress.province}
           </p>
 
           <p className="mb-4">
@@ -168,7 +144,7 @@ const Order = () => {
           </p>
 
           {order.isPaid ? (
-            <Message variant="success">Dibayarkan pada {order.paidAt}</Message>
+            <Message variant="success">Dibayarkan pada {new Date(order.paidAt).toLocaleString()}</Message>
           ) : (
             <Message variant="danger">Belum dibayar</Message>
           )}
@@ -194,20 +170,13 @@ const Order = () => {
 
         {!order.isPaid && (
           <div>
-            {loadingPay && <Loader />}{" "}
-            {isPending ? (
-              <Loader />
-            ) : (
-              <div>
-                <div>
-                  <PayPalButtons
-                    createOrder={createOrder}
-                    onApprove={onApprove}
-                    onError={onError}
-                  ></PayPalButtons>
-                </div>
-              </div>
-            )}
+            <button
+              type="button"
+              className="bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-full text-lg w-full mt-4"
+              onClick={handlePayment}
+            >
+              Bayar dengan Midtrans
+            </button>
           </div>
         )}
 

@@ -103,11 +103,11 @@ const PlaceOrder = () => {
               </li>
               <li>
                 <span className="font-semibold mb-4">Pajak:</span> Rp{" "}
-                {cart.taxPrice.toLocaleString("id-ID")}
+                {(cart.taxPrice).toLocaleString("id-ID")}
               </li>
               <li>
                 <span className="font-semibold mb-4">Total:</span> Rp{" "}
-                {cart.totalPrice.toLocaleString("id-ID")}
+                {(cart.totalPrice).toLocaleString("id-ID")}
               </li>
             </ul>
 

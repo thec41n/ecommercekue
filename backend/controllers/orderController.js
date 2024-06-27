@@ -9,9 +9,9 @@ function calcPrices(orderItems) {
     0
   );
 
-  const shippingPrice = itemsPrice > 100 ? 0 : 10;
+  const shippingPrice = itemsPrice > 100000 ? 0 : 2000;
   const taxRate = 0.11;
-  const taxPrice = (itemsPrice * taxRate);
+  const taxPrice = Math.round(itemsPrice * taxRate);
 
   const totalPrice = (
     itemsPrice +
@@ -192,20 +192,22 @@ const markOrderAsPaid = async (req, res) => {
     if (order) {
       order.isPaid = true;
       order.paidAt = Date.now();
+      
       order.paymentResult = {
-        id: req.body.id,
-        status: req.body.status,
-        update_time: req.body.update_time,
-        email_address: req.body.payer.email_address,
+        id: req.body.id || '',
+        status: req.body.status || '',
+        update_time: req.body.update_time || '',
+        email_address: req.body.payer?.email_address || '',
       };
 
-      const updateOrder = await order.save();
-      res.status(200).json(updateOrder);
+      const updatedOrder = await order.save();
+      res.status(200).json(updatedOrder);
     } else {
       res.status(404);
       throw new Error("Pesanan tidak ditemukan");
     }
   } catch (error) {
+    console.error("Error:", error);
     res.status(500).json({ error: error.message });
   }
 };
