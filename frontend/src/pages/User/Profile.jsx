@@ -124,7 +124,7 @@ const Profile = () => {
                 to="/user-orders"
                 className="bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded"
               >
-                My Orders
+                Pesanan Saya
               </Link>
             </div>
             {loadingUpdateProfile && <Loader />}

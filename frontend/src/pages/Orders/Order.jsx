@@ -102,9 +102,9 @@ const Order = () => {
                       </td>
 
                       <td className="p-2 text-center">{item.qty}</td>
-                      <td className="p-2 text-center">Rp {item.price}</td>
+                      <td className="p-2 text-center">Rp {item.price.toLocaleString("id-ID")}</td>
                       <td className="p-2 text-center">
-                        Rp {item.qty * item.price}
+                        Rp {(item.qty * item.price).toLocaleString("id-ID")}
                       </td>
                     </tr>
                   ))}
@@ -153,19 +153,19 @@ const Order = () => {
         <h2 className="text-xl font-bold mb-2 mt-[3rem]">Rincian Pembelian</h2>
         <div className="flex justify-between mb-2">
           <span>Barang</span>
-          <span>Rp {order.itemsPrice}</span>
+          <span>Rp {order.itemsPrice.toLocaleString("id-ID")}</span>
         </div>
         <div className="flex justify-between mb-2">
-          <span>Shipping</span>
-          <span>Rp {order.shippingPrice}</span>
+          <span>Ongkos Kirim</span>
+          <span>Rp {order.shippingPrice.toLocaleString("id-ID")}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span>Tax</span>
-          <span>Rp {order.taxPrice}</span>
+          <span>Rp {order.taxPrice.toLocaleString("id-ID")}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span>Total</span>
-          <span>Rp {order.totalPrice}</span>
+          <span>Rp {order.totalPrice.toLocaleString("id-ID")}</span>
         </div>
 
         {!order.isPaid && (
