@@ -175,7 +175,7 @@ const Order = () => {
               className="bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-full text-lg w-full mt-4"
               onClick={handlePayment}
             >
-              Bayar dengan Midtrans
+              Checkout
             </button>
           </div>
         )}
