@@ -63,6 +63,17 @@ const ProductDetails = () => {
     navigate("/cart");
   };
 
+  const formatDate = (date) => {
+    if (!date) return "N/A";
+
+    return new Date(date).toLocaleString("id-ID", {
+      weekday: "long",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
   return (
     <>
       <div>
@@ -95,7 +106,7 @@ const ProductDetails = () => {
 
             <div className="flex flex-col justify-between">
               <h2 className="text-2xl font-semibold">{product.name}</h2>
-              <p className="my-4 xl:w-[35rem] lg:w-[35rem] md:w-[30rem] text-[#000]">
+              <p className="my-4 xl:w-[35rem] text-justify lg:w-[35rem] md:w-[30rem] text-[#000]">
                 {product.description}
               </p>
 
@@ -111,7 +122,7 @@ const ProductDetails = () => {
                   </h1>
                   <h1 className="flex items-center mb-6 w-[20rem]">
                     <FaClock className="mr-2 text-black" /> Ditambahkan pada:{" "}
-                    {moment(product.createdAt).fromNow()}
+                    {formatDate(product.createdAt)}
                   </h1>
                   <h1 className="flex items-center mb-6">
                     <FaStar className="mr-2 text-black" /> Ulasan:{" "}

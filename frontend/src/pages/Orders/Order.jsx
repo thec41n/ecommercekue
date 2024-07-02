@@ -57,6 +57,20 @@ const Order = () => {
     refetch();
   };
 
+  const formatDate = (date) => {
+    if (!date) return "N/A";
+  
+    return new Date(date).toLocaleString("id-ID", {
+      weekday: "long",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    });
+  }
+
   useEffect(() => {
     if (order && order.isPaid) {
       refetch();
@@ -144,7 +158,7 @@ const Order = () => {
           </p>
 
           {order.isPaid ? (
-            <Message variant="success">Dibayarkan pada {new Date(order.paidAt).toLocaleString()}</Message>
+            <Message variant="success">Dibayarkan pada {formatDate(order.paidAt)}</Message>
           ) : (
             <Message variant="danger">Belum dibayar</Message>
           )}

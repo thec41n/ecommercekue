@@ -12,6 +12,17 @@ import {
   FaStore,
 } from "react-icons/fa";
 
+const formatDate = (date) => {
+  if (!date) return "N/A";
+
+  return new Date(date).toLocaleString("id-ID", {
+    weekday: "long",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 const ProductCarousel = () => {
   const { data: products, isLoading, error } = useGetTopProductsQuery();
 
@@ -81,8 +92,8 @@ const ProductCarousel = () => {
                           <FaStore className="mr-2 text-black" /> Merk: {brand}
                         </h1>
                         <h1 className="flex items-center mb-6">
-                          <FaClock className="mr-2 text-black" /> Ditambahkan: {" "}
-                          {moment(createdAt).fromNow()}
+                          <FaClock className="mr-2 text-black" /> Ditambahkan: {" "} <br />
+                          {formatDate(createdAt)}
                         </h1>
                         <h1 className="flex items-center mb-6">
                           <FaStar className="mr-2 text-black" /> Ulasan: {numReviews}

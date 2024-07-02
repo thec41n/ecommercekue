@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import moment from "moment";
 import { useAllProductsQuery } from "../../redux/api/productApiSlice";
 import AdminMenu from "./AdminMenu";
 
@@ -24,7 +23,7 @@ const AllProducts = () => {
             </div>
             <div className="flex flex-wrap justify-around items-center">
               {products.map((product) => {
-                const formattedPrice = product.price.toLocaleString('id-ID');
+                const formattedPrice = product.price.toLocaleString("id-ID");
                 return (
                   <Link
                     key={product._id}
@@ -44,7 +43,15 @@ const AllProducts = () => {
                           </h5>
 
                           <p className="text-gray-500 text-xs">
-                            {moment(product.createdAt).format("MMMM Do YYYY")}
+                            {new Date(product.createdAt).toLocaleDateString(
+                              "id-ID",
+                              {
+                                weekday: "long",
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )}
                           </p>
                         </div>
 

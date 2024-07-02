@@ -48,7 +48,12 @@ const OrderList = () => {
 
                 <td>
                   {order.createdAt
-                    ? new Date(order.createdAt).toLocaleDateString("id-ID")
+                    ? new Date(order.createdAt).toLocaleDateString("id-ID", {
+                        weekday: "long",
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
                     : "N/A"}
                 </td>
 
