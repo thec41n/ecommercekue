@@ -1,5 +1,5 @@
 import React from "react";
-import infoImage from "../img/cakeLogin.jpg";
+import bannerImage from "../img/banner.jpg";
 
 const AboutUs = () => {
   const styles = {
@@ -8,7 +8,7 @@ const AboutUs = () => {
       fontFamily: "Arial, sans-serif",
     },
     imageSection: {
-      backgroundImage: `url(${infoImage})`,
+      backgroundImage: `url(${bannerImage})`,
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
       backgroundPosition: "center",
@@ -27,6 +27,12 @@ const AboutUs = () => {
     heading: {
       marginTop: "20px",
       fontSize: "1.5em",
+    },
+    paragraph: {
+      maxWidth: "800px",
+      margin: "0 auto",
+      lineHeight: "1.6",
+      textAlign: "justify",
     },
     footer: {
       marginTop: "20px",
@@ -52,6 +58,17 @@ const AboutUs = () => {
       <div style={styles.imageSection}></div>
       <div style={styles.content}>
         <h1 style={styles.headingInfo}>Informasi</h1>
+        <p style={styles.paragraph}>
+          Selamat datang di Kue Yanti, tempat di mana cita rasa dan kualitas
+          bertemu untuk menciptakan kelezatan tak terlupakan. Sebagai usaha UMKM
+          yang berkomitmen untuk menyajikan kue dan jajanan terbaik yang ada di
+          Depok, Kue Yanti menawarkan berbagai pilihan makanan ringan hingga
+          kue-kue spesial seperti bolu, brownies, dan kue-kue khas lainnya.
+          Dibuat dengan bahan-bahan berkualitas dan penuh cinta, setiap gigitan
+          dari Kue Yanti menghadirkan kehangatan dan kebahagiaan bagi Anda dan
+          keluarga. Mari rasakan manisnya kebersamaan dengan Kue Yanti, teman
+          terbaik untuk setiap momen istimewa Anda.
+        </p>
         <h2 style={styles.heading}>Alamat</h2>
         <p>Jl.Stasiun No.15, Depok, Jawa Barat</p>
 

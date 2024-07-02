@@ -16,7 +16,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLogoutMutation } from "../../redux/api/usersApiSlice";
 import { logout } from "../../redux/features/auth/authSlice";
 import FavoritesCount from "../Products/FavoritesCount";
-import logo from "../../img/cakeLogin.jpg";
+import logo from "../../img/logo.png";
 
 const Navigation = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -78,7 +78,7 @@ const Navigation = () => {
     >
       <div className="flex flex-col justify-center space-y-4">
         <div className="flex justify-center items-center mt-4">
-          <img src={logo} alt="Logo" className="w-10 h-10" />
+          <img src={logo} alt="Logo" className="w-12 h-12" />
           <span className="hidden nav-item-name ml-2">KUE YANTI</span>
         </div>
         <Link
@@ -166,7 +166,7 @@ const Navigation = () => {
         {dropdownOpen && userInfo && (
           <ul
             className={`absolute right-0 mt-2 mr-14 space-y-2 bg-white text-gray-600 ${
-              !userInfo.isAdmin ? "-top-20" : "-top-80 -mt-10"
+              !userInfo.isAdmin ? "-top-20" : "-top-80 -mt-11"
             } `}
             onClick={(e) => e.stopPropagation()}
           >
