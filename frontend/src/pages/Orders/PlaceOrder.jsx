@@ -37,7 +37,7 @@ const PlaceOrder = () => {
       dispatch(clearCartItems());
       navigate(`/order/${res._id}`);
     } catch (error) {
-      toast.error(error?.data?.error || error.error);
+      toast.error(error?.data?.message || error.error);
     }
   };
 
@@ -113,7 +113,7 @@ const PlaceOrder = () => {
               </li>
             </ul>
 
-            {error && <Message variant="danger">{error.data.message}</Message>}
+            {error && <Message variant="danger">{error?.data?.message || error.error}</Message>}
 
             <div>
               <h2 className="mt-5 text-xl font-semibold mb-3">Pengiriman</h2>

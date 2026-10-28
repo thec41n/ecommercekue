@@ -40,7 +40,7 @@ const Order = () => {
             toast.success("Pesanan sudah dibayar");
           } catch (error) {
             console.error("Payment error:", error);
-            toast.error(error?.data?.error || error.error);
+            toast.error(error?.data?.message || error.error);
           }
         },
         onPending: function (result) {
@@ -84,7 +84,7 @@ const Order = () => {
   }, [order?.isPaid, refetch]);
 
   if (isLoading) return <Loader />;
-  if (error) return <Message variant="danger">{error.data.message}</Message>;
+  if (error) return <Message variant="danger">{error?.data?.message || error.error}</Message>;
 
   return (
     <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -17,7 +17,8 @@ test("asyncHandler forwards rejected errors to next", async () => {
   assert.equal(forwarded.message, "boom");
 });
 
-test("errorHandler keeps preset status, then err.status, then 500", () => {
+test("errorHandler keeps preset status, then err.status, then 500", (t) => {
+  const logged = t.mock.method(console, "error", () => {});
   const preset = mockRes(404);
   errorHandler(new Error("not found"), {}, preset, () => {});
   assert.equal(preset.statusCode, 404);
@@ -30,6 +31,7 @@ test("errorHandler keeps preset status, then err.status, then 500", () => {
   const fallback = mockRes();
   errorHandler(new Error("boom"), {}, fallback, () => {});
   assert.equal(fallback.statusCode, 500);
+  assert.equal(logged.mock.callCount(), 1);
 });
 
 test("errorHandler delegates to next when headers are already sent", () => {

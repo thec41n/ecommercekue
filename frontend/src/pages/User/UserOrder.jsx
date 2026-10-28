@@ -13,7 +13,7 @@ const UserOrder = () => {
       {isLoading ? (
         <Loader />
       ) : error ? (
-        <Message variant="danger">{error?.data?.error || error.error}</Message>
+        <Message variant="danger">{error?.data?.message || error.error}</Message>
       ) : (
         <div className="w-full overflow-x-auto">
           <div className="hidden md:block">
