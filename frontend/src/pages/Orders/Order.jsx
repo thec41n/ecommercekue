@@ -30,12 +30,12 @@ const Order = () => {
       window.snap.pay(order.paymentResult.token, {
         onSuccess: async (result) => {
           try {
-            await payOrder({ orderId, details: result });
+            await payOrder({ orderId, details: result }).unwrap();
             refetch();
             toast.success("Pesanan sudah dibayar");
           } catch (error) {
             console.error("Payment error:", error);
-            toast.error(error?.data?.message || error.message);
+            toast.error(error?.data?.error || error.error);
           }
         },
         onPending: function(result) {

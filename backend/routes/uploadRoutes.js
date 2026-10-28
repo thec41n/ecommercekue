@@ -2,6 +2,7 @@ import path from "path";
 import express from "express";
 import multer from "multer";
 import sharp from "sharp";
+import { authenticate, authorizeAdmin } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -16,8 +17,8 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const filetypes = /jpe?g|png|webp/;
-  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
+  const filetypes = /^\.(jpe?g|png|webp)$/;
+  const mimetypes = /^image\/(jpe?g|png|webp)$/;
 
   const extname = path.extname(file.originalname).toLowerCase();
   const mimetype = file.mimetype;
@@ -29,10 +30,14 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
 const uploadSingleImage = upload.single("image");
 
-router.post("/", (req, res) => {
+router.post("/", authenticate, authorizeAdmin, (req, res) => {
   uploadSingleImage(req, res, async (err) => {
     if (err) {
       res.status(400).send({ message: err.message });

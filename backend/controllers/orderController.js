@@ -27,11 +27,22 @@ function calcPrices(orderItems) {
   };
 }
 
+function isValidQty(qty, countInStock) {
+  return Number.isInteger(qty) && qty >= 1 && qty <= countInStock;
+}
+
+function isMidtransPaid({ transaction_status, fraud_status }) {
+  return (
+    transaction_status === "settlement" ||
+    (transaction_status === "capture" && fraud_status === "accept")
+  );
+}
+
 const createOrder = async (req, res) => {
   try {
     const { orderItems, shippingAddress, paymentMethod } = req.body;
 
-    if (orderItems && orderItems.length === 0) {
+    if (!Array.isArray(orderItems) || orderItems.length === 0) {
       res.status(400);
       throw new Error("Tidak ada pesanan");
     }
@@ -50,11 +61,19 @@ const createOrder = async (req, res) => {
         throw new Error(`Produk tidak ditemukan: ${itemFromClient._id}`);
       }
 
+      const qty = Number(itemFromClient.qty);
+
+      if (!isValidQty(qty, matchingItemFromDB.countInStock)) {
+        res.status(400);
+        throw new Error(`Jumlah tidak valid: ${matchingItemFromDB.name}`);
+      }
+
       return {
-        ...itemFromClient,
-        product: itemFromClient._id,
+        name: matchingItemFromDB.name,
+        qty,
+        image: matchingItemFromDB.image,
         price: matchingItemFromDB.price,
-        _id: undefined,
+        product: matchingItemFromDB._id,
       };
     });
 
@@ -175,6 +194,9 @@ const findOrderById = async (req, res) => {
     );
 
     if (order) {
+      if (!req.user.isAdmin && !order.user?._id.equals(req.user._id)) {
+        return res.status(403).json({ error: "Akses ditolak" });
+      }
       res.json(order);
     } else {
       res.status(404);
@@ -190,15 +212,23 @@ const markOrderAsPaid = async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (order) {
+      if (!req.user.isAdmin && !order.user._id.equals(req.user._id)) {
+        return res.status(403).json({ error: "Akses ditolak" });
+      }
+
+      if (order.isPaid) return res.json(order);
+
+      const status = await midtrans.transaction.status(order._id.toString());
+
+      if (!isMidtransPaid(status)) {
+        return res.status(400).json({ error: "Pembayaran belum diterima" });
+      }
+
       order.isPaid = true;
       order.paidAt = Date.now();
-      
-      order.paymentResult = {
-        id: req.body.id || '',
-        status: req.body.status || '',
-        update_time: req.body.update_time || '',
-        email_address: req.body.payer?.email_address || '',
-      };
+      order.paymentResult.id = status.transaction_id;
+      order.paymentResult.status = status.transaction_status;
+      order.paymentResult.update_time = status.transaction_time;
 
       const updatedOrder = await order.save();
       res.status(200).json(updatedOrder);
@@ -232,6 +262,8 @@ const markOrderAsDelivered = async (req, res) => {
 };
 
 export {
+  isValidQty,
+  isMidtransPaid,
   createOrder,
   getAllOrders,
   getUserOrders,

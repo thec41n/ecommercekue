@@ -12,7 +12,9 @@ const createUser = asyncHandler(async (req, res) => {
   }
 
   const userExists = await User.findOne({ email });
-  if (userExists) res.status(400).send("Email yang digunakan sudah ada!");
+  if (userExists) {
+    return res.status(400).json({ message: "Email yang digunakan sudah ada!" });
+  }
 
   const salt = await bcrypt.genSalt(15);
   const hashedPassword = await bcrypt.hash(password, salt);
