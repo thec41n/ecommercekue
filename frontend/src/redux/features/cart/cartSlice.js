@@ -14,11 +14,12 @@ const cartSlice = createSlice({
       const existItem = state.cartItems.find((x) => x._id === item._id);
 
       if (existItem) {
+        existItem.qty = item.qty;
         state.cartItems = state.cartItems.map((x) =>
           x._id === existItem._id ? item : x
         );
       } else {
-        state.cartItems = [...state.cartItems, item];
+        state.cartItems.push({ ...item, qty: item.qty });
       }
       return updateCart(state, item);
     },
