@@ -3,11 +3,14 @@ import asyncHandler from "../middlewares/asyncHandler.js";
 import bcrypt from "bcryptjs";
 import createToken from "../utils/createToken.js";
 
+const isFilledString = (value) => typeof value === "string" && value !== "";
+
 // Create User
 const createUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  if (!username || !email || !password) {
+  if (![username, email, password].every(isFilledString)) {
+    res.status(400);
     throw new Error("Tolong isi semua input!");
   }
 
@@ -39,6 +42,11 @@ const createUser = asyncHandler(async (req, res) => {
 // Login User
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
+  if (![email, password].every(isFilledString)) {
+    res.status(400);
+    throw new Error("Email dan password wajib diisi!");
+  }
 
   const existingUser = await User.findOne({ email });
 

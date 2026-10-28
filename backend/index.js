@@ -11,6 +11,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -38,5 +39,7 @@ app.get("/api/config/midtrans", (req, res) => {
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname + "/uploads")));
+
+app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server running on port: ${port}`));
