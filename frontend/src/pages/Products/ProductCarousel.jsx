@@ -1,127 +1,72 @@
+import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { FaStar } from "react-icons/fa";
 import { useGetTopProductsQuery } from "../../redux/api/productApiSlice";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
-import {
-  FaBox,
-  FaClock,
-  FaShoppingCart,
-  FaStar,
-  FaStore,
-} from "react-icons/fa";
 
-const formatDate = (date) => {
-  if (!date) return "N/A";
-  return new Date(date).toLocaleString("id-ID", {
-    weekday: "long",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+const settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  arrows: true,
+  autoplay: true,
+  autoplaySpeed: 4000,
+  responsive: [{ breakpoint: 768, settings: { arrows: false } }],
 };
 
 const ProductCarousel = () => {
   const { data: products, isLoading, error } = useGetTopProductsQuery();
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: true,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    responsive: [
-      {
-        breakpoint: 768, // Target devices smaller than 768px
-        settings: {
-          arrows: false, // Disable arrows on small devices
-          dots: true, // Enable dots for navigation
-        }
-      }
-    ]
-  };
+  if (isLoading) return <Loader />;
+
+  if (error) {
+    return (
+      <Message variant="danger">{error?.data?.message || error.error}</Message>
+    );
+  }
 
   return (
-    <div className="mb-4">
-      <style>{`
-        .slick-prev:before, .slick-next:before {
-          color: black;
-        }
-      `}</style>
-      {isLoading ? (
-        <Loader />
-      ) : error ? (
-        <Message variant="danger">
-          {error?.data?.message || error.error}
-        </Message>
-      ) : (
-        <Slider {...settings} className="w-full md:w-[60rem] mx-auto">
-          {products.map((product) => {
-            const {
-              image,
-              _id,
-              name,
-              price,
-              description,
-              brand,
-              createdAt,
-              numReviews,
-              rating,
-              quantity,
-              countInStock,
-            } = product;
-            const formattedPrice = price.toLocaleString('id-ID');
-            return (
-              <div key={_id} className="p-4">
-                <img
-                  src={image}
-                  alt={name}
-                  className="w-full rounded-lg object-cover h-[20rem] md:h-[30rem]"
-                />
-                <div className="mt-4 flex flex-col md:flex-row justify-between">
-                  <div className="flex-1 md:mr-4">
-                    <h2>{name}</h2>
-                    <p>Rp {formattedPrice}</p>
-                    <p className="hidden md:block">{description.substring(0, 170)}...</p>
-                  </div>
-                  <div className="flex-1 mt-4 md:mt-0">
-                    <div className="flex flex-col md:flex-row justify-between">
-                      <div className="flex-1">
-                        <h1 className="flex items-center mb-2">
-                          <FaStore className="mr-2 text-black" /> Merk: {brand}
-                        </h1>
-                        <h1 className="flex items-center mb-2">
-                          <FaClock className="mr-2 text-black" /> Ditambahkan: <br />
-                          {formatDate(createdAt)}
-                        </h1>
-                        <h1 className="flex items-center mb-2">
-                          <FaStar className="mr-2 text-black" /> Ulasan: {numReviews}
-                        </h1>
-                      </div>
-                      <div className="flex-1 mt-4 md:mt-0">
-                        <h1 className="flex items-center mb-2">
-                          <FaStar className="mr-2 text-black" /> Rating: {Math.round(rating)}
-                        </h1>
-                        <h1 className="flex items-center mb-2">
-                          <FaShoppingCart className="mr-2 text-black" /> Kuantitas: {quantity}
-                        </h1>
-                        <h1 className="flex items-center mb-2">
-                          <FaBox className="mr-2 text-black" /> Stok Barang: {countInStock}
-                        </h1>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+    <Slider {...settings} className="pb-8">
+      {products.map((product) => (
+        <div key={product._id} className="px-1 py-1">
+          <div className="card grid overflow-hidden md:grid-cols-2">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="h-64 w-full object-cover md:h-80"
+            />
+            <div className="flex flex-col justify-center gap-3 p-6 md:p-10">
+              <span className="w-fit rounded-full bg-blush-light px-3 py-1 text-xs font-semibold">
+                {product.brand}
+              </span>
+              <h3 className="font-heading text-2xl font-semibold md:text-3xl">
+                {product.name}
+              </h3>
+              <p className="flex items-center gap-2 text-sm text-cocoa-light">
+                <FaStar className="text-yellow-500" />
+                {product.numReviews > 0
+                  ? `${product.rating.toFixed(1)} · ${product.numReviews} ulasan`
+                  : "Belum ada ulasan"}
+              </p>
+              <p className="line-clamp-3 text-cocoa-light">{product.description}</p>
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
+                <span className="text-2xl font-bold text-orange-700">
+                  Rp {product.price.toLocaleString("id-ID")}
+                </span>
+                <Link to={`/product/${product._id}`} className="btn-primary">
+                  Lihat Detail
+                </Link>
               </div>
-            );
-          })}
-        </Slider>
-      )}
-    </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </Slider>
   );
 };
 

@@ -1,64 +1,48 @@
-import React from "react";
-import bannerImage from "../img/banner.jpg";
+import {
+  FaClock,
+  FaFacebook,
+  FaInstagram,
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaWhatsapp,
+} from "react-icons/fa";
+import banner from "../img/banner.jpg";
+
+const InfoCard = ({ icon: Icon, title, children }) => (
+  <div className="card p-6">
+    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-blush-light text-orange-700">
+      <Icon size={20} />
+    </span>
+    <h3 className="mt-4 font-heading text-xl font-semibold">{title}</h3>
+    <div className="mt-2 space-y-2 text-cocoa-light">{children}</div>
+  </div>
+);
+
+const linkClass = "flex items-center gap-2 hover:text-orange-700";
 
 const AboutUs = () => {
-  const styles = {
-    container: {
-      textAlign: "center",
-      fontFamily: "Arial, sans-serif",
-    },
-    imageSection: {
-      backgroundImage: `url(${bannerImage})`,
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "center",
-      height: "280px",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    content: {
-      marginTop: "5px",
-      padding: "20px",
-    },
-    headingInfo: {
-      fontSize: "2.5em",
-    },
-    heading: {
-      marginTop: "20px",
-      fontSize: "1.5em",
-    },
-    paragraph: {
-      maxWidth: "800px",
-      margin: "0 auto",
-      lineHeight: "1.6",
-      textAlign: "justify",
-    },
-    footer: {
-      marginTop: "20px",
-      padding: "20px",
-      backgroundColor: "#faa4a2",
-    },
-    footerContent: {
-      display: "flex",
-      justifyContent: "space-between",
-      flexWrap: "wrap",
-    },
-    footerSection: {
-      width: "45%",
-      marginBottom: "10px",
-    },
-    footerText: {
-      margin: "5px 0",
-    },
-  };
-
   return (
-    <div style={styles.container}>
-      <div style={styles.imageSection}></div>
-      <div style={styles.content}>
-        <h1 style={styles.headingInfo}>Informasi</h1>
-        <p style={styles.paragraph}>
+    <div className="container-page">
+      <section className="relative overflow-hidden rounded-3xl">
+        <img
+          src={banner}
+          alt="Etalase aneka kue Kue Yanti"
+          className="h-56 w-full object-cover md:h-80"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-cocoa/80 via-cocoa/30 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-6 md:p-10">
+          <p className="text-sm font-semibold uppercase tracking-wide text-blush-light">
+            Tentang Kami
+          </p>
+          <h1 className="mt-1 font-heading text-3xl font-semibold text-white md:text-5xl">
+            Kue Yanti
+          </h1>
+        </div>
+      </section>
+
+      <section className="mx-auto mt-10 max-w-3xl text-center">
+        <h2 className="section-title">Cerita Kami</h2>
+        <p className="mt-4 text-left text-lg leading-relaxed text-cocoa-light md:text-justify">
           Selamat datang di Kue Yanti, tempat di mana cita rasa dan kualitas
           bertemu untuk menciptakan kelezatan tak terlupakan. Sebagai usaha UMKM
           yang berkomitmen untuk menyajikan kue dan jajanan terbaik yang ada di
@@ -69,38 +53,43 @@ const AboutUs = () => {
           keluarga. Mari rasakan manisnya kebersamaan dengan Kue Yanti, teman
           terbaik untuk setiap momen istimewa Anda.
         </p>
-        <h2 style={styles.heading}>Alamat</h2>
-        <p>Jl.Stasiun No.15, Depok, Jawa Barat</p>
+      </section>
 
-        <h2 style={styles.heading}>Phone</h2>
-        <p>+62 8952315537</p>
+      <section className="mt-12 grid gap-6 md:grid-cols-3">
+        <InfoCard icon={FaMapMarkerAlt} title="Alamat">
+          <p>Jl. Stasiun No. 15, Depok, Jawa Barat</p>
+        </InfoCard>
 
-        <h2 style={styles.heading}>Contact Person</h2>
-        <p>WhatsApp: +62 8952315537</p>
-        <p>Instagram: @kue.yanti</p>
-        <p>Facebook: Kue Yanti</p>
+        <InfoCard icon={FaPhoneAlt} title="Kontak">
+          <a href="tel:+628952315537" className={linkClass}>
+            <FaPhoneAlt className="shrink-0" /> +62 895-2315-537
+          </a>
+          <a
+            href="https://wa.me/628952315537"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={linkClass}
+          >
+            <FaWhatsapp className="shrink-0" /> WhatsApp
+          </a>
+          <a
+            href="https://instagram.com/kue.yanti"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={linkClass}
+          >
+            <FaInstagram className="shrink-0" /> @kue.yanti
+          </a>
+          <p className="flex items-center gap-2">
+            <FaFacebook className="shrink-0" /> Kue Yanti
+          </p>
+        </InfoCard>
 
-        <h2 style={styles.heading}>Open Hours</h2>
-        <p>Senin - Jumat: 8:00 WIB - 17:00 WIB</p>
-        <p>Sabtu: 8:00 WIB - 12:00 WIB</p>
-      </div>
-      <footer style={styles.footer}>
-        <div style={styles.footerContent}>
-          <div style={styles.footerSection}>
-            <p style={styles.footerText}>
-              ©Kue Yanti 2024. All Rights Reserved.
-            </p>
-            <p style={styles.footerText}>
-              Alamat: Jl.Stasiun No.15, Depok, Jawa Barat
-            </p>
-          </div>
-          <div style={styles.footerSection}>
-            <p style={styles.footerText}>Social Media:</p>
-            <p style={styles.footerText}>Instagram: @kue.yanti</p>
-            <p style={styles.footerText}>Facebook: Kue Yanti</p>
-          </div>
-        </div>
-      </footer>
+        <InfoCard icon={FaClock} title="Jam Buka">
+          <p>Senin – Jumat: 08.00 – 17.00 WIB</p>
+          <p>Sabtu: 08.00 – 12.00 WIB</p>
+        </InfoCard>
+      </section>
     </div>
   );
 };

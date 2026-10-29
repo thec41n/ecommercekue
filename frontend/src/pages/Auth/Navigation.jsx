@@ -1,46 +1,86 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  AiOutlineHome,
-  AiOutlineShopping,
-  AiOutlineLogin,
-  AiOutlineUserAdd,
+  AiOutlineClose,
+  AiOutlineDown,
+  AiOutlineHeart,
+  AiOutlineMenu,
   AiOutlineShoppingCart,
-  AiOutlineShop,
 } from "react-icons/ai";
-import { FaHeart } from "react-icons/fa";
-import { IoIosInformationCircleOutline } from "react-icons/io";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import "./Navigation.css";
-import { useSelector, useDispatch } from "react-redux";
 import { useLogoutMutation } from "../../redux/api/usersApiSlice";
 import { logout } from "../../redux/features/auth/authSlice";
-import FavoritesCount from "../Products/FavoritesCount";
 import logo from "../../img/logo.png";
+
+const mainLinks = [
+  { to: "/", label: "Beranda" },
+  { to: "/shop", label: "Belanja" },
+  { to: "/about", label: "Tentang Kami" },
+];
+
+const adminLinks = [
+  { to: "/admin/dashboard", label: "Dashboard" },
+  { to: "/admin/productlist", label: "Tambah Jajanan" },
+  { to: "/admin/allproductslist", label: "Daftar Jajanan" },
+  { to: "/admin/categorylist", label: "Kategori Makanan" },
+  { to: "/admin/orderlist", label: "Pesanan" },
+  { to: "/admin/userlist", label: "Users" },
+];
+
+const userLinks = [
+  { to: "/profile", label: "Profil" },
+  { to: "/user-orders", label: "Pesanan Saya" },
+];
+
+const navLinkClass = ({ isActive }) =>
+  `rounded-full px-4 py-2 font-semibold transition ${
+    isActive ? "bg-blush-light text-orange-700" : "text-cocoa hover:bg-blush-light"
+  }`;
+
+const IconLink = ({ to, label, count, children }) => (
+  <Link
+    to={to}
+    aria-label={label}
+    className="relative rounded-full p-2 text-cocoa transition hover:bg-blush-light"
+  >
+    {children}
+    {count > 0 && (
+      <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-orange-700 px-1 text-xs font-bold text-white">
+        {count}
+      </span>
+    )}
+  </Link>
+);
 
 const Navigation = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.cart);
+  const favoritesCount = useSelector((state) => state.favorites.length);
+  const cartCount = cartItems.reduce((a, c) => a + Number(c.qty), 0);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-  const closeDropdown = () => {
-    setDropdownOpen(false);
-  };
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const [logoutApiCall] = useLogoutMutation();
+
+  const accountLinks = userInfo
+    ? [...(userInfo.isAdmin ? adminLinks : []), ...userLinks]
+    : [];
+
+  useEffect(() => {
+    setMenuOpen(false);
+    setDropdownOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const closeDropdown = () => setDropdownOpen(false);
+    window.addEventListener("click", closeDropdown);
+    return () => window.removeEventListener("click", closeDropdown);
+  }, []);
 
   const logoutHandler = async () => {
     try {
@@ -52,277 +92,138 @@ const Navigation = () => {
     }
   };
 
-  useEffect(() => {
-    window.addEventListener("click", closeDropdown);
-
-    return () => {
-      window.removeEventListener("click", closeDropdown);
-    };
-  });
-
-  const dropdownClickHandler = (e) => {
-    e.stopPropagation();
-  };
-
   return (
-    <div className="top-nav" id="navigation-container">
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center nav-left">
-          <img src={logo} alt="Logo" className="w-12 h-12" />
-          <span className="ml-2 text-xl font-bold">KUE YANTI</span>
+    <header className="sticky top-0 z-40 border-b border-blush-soft bg-white/95 backdrop-blur">
+      <nav className="container-page flex h-16 items-center gap-4">
+        <Link to="/" className="flex items-center gap-2">
+          <img src={logo} alt="" className="h-10 w-10" />
+          <span className="font-heading text-xl font-semibold">Kue Yanti</span>
+        </Link>
+
+        <div className="hidden flex-1 justify-center gap-1 md:flex">
+          {mainLinks.map(({ to, label }) => (
+            <NavLink key={to} to={to} end={to === "/"} className={navLinkClass}>
+              {label}
+            </NavLink>
+          ))}
         </div>
-        <div className="nav-links hidden md:flex">
-          <Link to="/" className="nav-link">
-            <AiOutlineHome size={26} />
-            <span>HOME</span>
-          </Link>
-          <Link to="/about" className="nav-link">
-            <IoIosInformationCircleOutline size={26} />
-            <span>ABOUT US</span>
-          </Link>
-          <Link to="/shop" className="nav-link">
-            <AiOutlineShopping size={26} />
-            <span>SHOP</span>
-          </Link>
-          <Link to="/cart" className="nav-link relative">
-            <AiOutlineShoppingCart size={26} />
-            <span>KERANJANG</span>
-            {cartItems.length > 0 && (
-              <span className="cart-count">
-                {cartItems.reduce((a, c) => a + Number(c.qty), 0)}
-              </span>
-            )}
-          </Link>
-          <Link to="/favorite" className="nav-link relative">
-            <FaHeart size={20} />
-            <span>FAVORITES</span>
-            <FavoritesCount />
-          </Link>
-        </div>
-        <div className="nav-auth-links hidden md:flex">
-          {!userInfo && (
-            <>
-              <Link to="/login" className="nav-link">
-                <AiOutlineLogin size={26} />
-                <span>LOGIN</span>
-              </Link>
-              <Link to="/register" className="nav-link">
-                <AiOutlineUserAdd size={26} />
-                <span>REGISTER</span>
-              </Link>
-            </>
-          )}
-          {userInfo && (
-            <div className="relative" onClick={dropdownClickHandler}>
-              <button
-                onClick={toggleDropdown}
-                className="flex items-center text-white focus:outline-none"
-              >
-                <span>{userInfo.username}</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-4 w-4 ml-1 ${
-                    dropdownOpen ? "transform rotate-180" : ""
-                  }`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="white"
+
+        <div className="ml-auto flex items-center gap-1">
+          <IconLink to="/favorite" label="Favorit" count={favoritesCount}>
+            <AiOutlineHeart size={24} />
+          </IconLink>
+          <IconLink to="/cart" label="Keranjang" count={cartCount}>
+            <AiOutlineShoppingCart size={24} />
+          </IconLink>
+
+          <div className="ml-2 hidden items-center gap-2 md:flex">
+            {userInfo ? (
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <button
+                  type="button"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  aria-haspopup="menu"
+                  aria-expanded={dropdownOpen}
+                  className="flex items-center gap-1 rounded-full px-3 py-2 font-semibold transition hover:bg-blush-light"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d={
-                      dropdownOpen
-                        ? "M5 15l7-7 7 7"
-                        : "M19 9l-7 7-7-7"
-                    }
+                  {userInfo.username}
+                  <AiOutlineDown
+                    size={14}
+                    className={`transition ${dropdownOpen ? "rotate-180" : ""}`}
                   />
-                </svg>
-              </button>
-              {dropdownOpen && (
-                <ul
-                  className={`dropdown-menu ${
-                    !userInfo.isAdmin
-                      ? "-top-0.1"
-                      : "-top-0.1"
-                  }`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {userInfo.isAdmin && (
-                    <>
-                      <li>
-                        <Link to="/admin/dashboard" className="flex w-full hover:bg-gray-100">Dashboard</Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/productlist" className="flex w-full hover:bg-gray-100">
-                          Tambah Jajanan
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/allproductslist" className="flex w-full hover:bg-gray-100">
-                          Daftar Jajanan
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/categorylist" className="flex w-full hover:bg-gray-100">
-                          Kategori Makanan
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/orderlist" className="flex w-full hover:bg-gray-100">Pesanan</Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/userlist" className="flex w-full hover:bg-gray-100">Users</Link>
-                      </li>
-                    </>
-                  )}
-                  <li>
-                    <Link to="/profile" className="flex w-full hover:bg-gray-100">Profile</Link>
-                  </li>
-                  <li>
-                    <Link onClick={logoutHandler} className="flex w-full hover:bg-gray-100">Logout</Link>
-                  </li>
-                </ul>
-              )}
-            </div>
-          )}
-        </div>
-        <button className="md:hidden" onClick={toggleMenu}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+                </button>
+
+                {dropdownOpen && (
+                  <div className="card absolute right-0 mt-2 w-56 py-2" role="menu">
+                    {accountLinks.map(({ to, label }) => (
+                      <Link
+                        key={to}
+                        to={to}
+                        role="menuitem"
+                        className="block px-4 py-2 hover:bg-blush-light"
+                      >
+                        {label}
+                      </Link>
+                    ))}
+                    <div className="my-2 border-t border-blush-soft" />
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={logoutHandler}
+                      className="block w-full px-4 py-2 text-left text-red-700 hover:bg-red-50"
+                    >
+                      Keluar
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link to="/login" className="btn-outline px-5 py-2">
+                  Masuk
+                </Link>
+                <Link to="/register" className="btn-primary px-5 py-2">
+                  Daftar
+                </Link>
+              </>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Tutup menu" : "Buka menu"}
+            aria-expanded={menuOpen}
+            className="rounded-full p-2 transition hover:bg-blush-light md:hidden"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
-      </div>
+            {menuOpen ? <AiOutlineClose size={24} /> : <AiOutlineMenu size={24} />}
+          </button>
+        </div>
+      </nav>
+
       {menuOpen && (
-        <div className="md:hidden flex flex-col mt-2 space-y-2 nav-links">
-          <Link to="/" className="nav-link">
-            <AiOutlineHome size={26} />
-            <span>HOME</span>
-          </Link>
-          <Link to="/about" className="nav-link">
-            <IoIosInformationCircleOutline size={26} />
-            <span>ABOUT US</span>
-          </Link>
-          <Link to="/shop" className="nav-link">
-            <AiOutlineShopping size={26} />
-            <span>SHOP</span>
-          </Link>
-          <Link to="/cart" className="nav-link relative">
-            <AiOutlineShoppingCart size={26} />
-            <span>KERANJANG</span>
-            {cartItems.length > 0 && (
-              <span className="cart-count">
-                {cartItems.reduce((a, c) => a + Number(c.qty), 0)}
-              </span>
+        <div className="border-t border-blush-soft bg-white md:hidden">
+          <div className="container-page flex flex-col gap-1 py-3">
+            {mainLinks.map(({ to, label }) => (
+              <NavLink key={to} to={to} end={to === "/"} className={navLinkClass}>
+                {label}
+              </NavLink>
+            ))}
+
+            <div className="my-2 border-t border-blush-soft" />
+
+            {userInfo ? (
+              <>
+                <p className="px-4 py-1 text-sm text-cocoa-light">
+                  Halo, {userInfo.username}
+                </p>
+                {accountLinks.map(({ to, label }) => (
+                  <NavLink key={to} to={to} className={navLinkClass}>
+                    {label}
+                  </NavLink>
+                ))}
+                <button
+                  type="button"
+                  onClick={logoutHandler}
+                  className="rounded-full px-4 py-2 text-left font-semibold text-red-700 hover:bg-red-50"
+                >
+                  Keluar
+                </button>
+              </>
+            ) : (
+              <div className="flex gap-3 pt-1">
+                <Link to="/login" className="btn-outline flex-1">
+                  Masuk
+                </Link>
+                <Link to="/register" className="btn-primary flex-1">
+                  Daftar
+                </Link>
+              </div>
             )}
-          </Link>
-          <Link to="/favorite" className="nav-link relative">
-            <FaHeart size={20} />
-            <span>FAVORITES</span>
-            <FavoritesCount />
-          </Link>
-          {!userInfo && (
-            <>
-              <Link to="/login" className="nav-link">
-                <AiOutlineLogin size={26} />
-                <span>LOGIN</span>
-              </Link>
-              <Link to="/register" className="nav-link">
-                <AiOutlineUserAdd size={26} />
-                <span>REGISTER</span>
-              </Link>
-            </>
-          )}
-          {userInfo && (
-            <div className="relative" onClick={dropdownClickHandler}>
-              <button
-                onClick={toggleDropdown}
-                className="flex items-center text-white focus:outline-none"
-              >
-                <span>{userInfo.username}</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-4 w-4 ml-1 ${
-                    dropdownOpen ? "transform rotate-180" : ""
-                  }`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="white"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d={
-                      dropdownOpen
-                        ? "M5 15l7-7 7 7"
-                        : "M19 9l-7 7-7-7"
-                    }
-                  />
-                </svg>
-              </button>
-              {dropdownOpen && (
-                <ul
-                  className={`dropdown-menu ${
-                    !userInfo.isAdmin
-                      ? "-top-20"
-                      : "-top-80 -mt-11"
-                  }`}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {userInfo.isAdmin && (
-                    <>
-                      <li>
-                        <Link to="/admin/dashboard" className="flex w-full hover:bg-gray-100">Dashboard</Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/productlist" className="flex w-full hover:bg-gray-100">
-                          Tambah Jajanan
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/allproductslist" className="flex w-full hover:bg-gray-100">
-                          Daftar Jajanan
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/categorylist" className="flex w-full hover:bg-gray-100">
-                          Kategori Makanan
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/orderlist" className="flex w-full hover:bg-gray-100">Pesanan</Link>
-                      </li>
-                      <li>
-                        <Link to="/admin/userlist" className="flex w-full hover:bg-gray-100">Users</Link>
-                      </li>
-                    </>
-                  )}
-                  <li>
-                    <Link to="/profile" className="flex w-full hover:bg-gray-100">Profile</Link>
-                  </li>
-                  <li>
-                    <Link onClick={logoutHandler} className="flex w-full hover:bg-gray-100">Logout</Link>
-                  </li>
-                </ul>
-              )}
-            </div>
-          )}
+          </div>
         </div>
       )}
-    </div>
+    </header>
   );
 };
 

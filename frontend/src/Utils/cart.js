@@ -1,3 +1,5 @@
+export const FREE_SHIPPING_MIN = 100000;
+
 export const addDecimals = (num) => {
   return (Math.round(num * 100) / 100);
 };
@@ -7,7 +9,7 @@ export const updateCart = (state) => {
     state.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
   );
 
-  state.shippingPrice = Math.round(state.itemsPrice > 100000 ? 0 : 2000);
+  state.shippingPrice = Math.round(state.itemsPrice > FREE_SHIPPING_MIN ? 0 : 2000);
 
   state.taxPrice = Math.round(Number((0.11 * state.itemsPrice)));
 

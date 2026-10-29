@@ -1,182 +1,198 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useMemo, useState } from "react";
+import { AiOutlineFilter } from "react-icons/ai";
+import { FaCookieBite } from "react-icons/fa";
 import { useGetFilteredProductsQuery } from "../redux/api/productApiSlice";
 import { useFetchCategoriesQuery } from "../redux/api/categoryApiSlice";
-
-import {
-  setCategories,
-  setProducts,
-  setChecked,
-} from "../redux/features/shop/shopSlice";
 import Loader from "../components/Loader";
-import ProductCard from "../pages/Products/ProductCard"; // Import ProductCard component
+import Message from "../components/Message";
+import Product from "./Products/Product";
+
+const PRICE_RANGES = [
+  { id: "lt25", label: "Di bawah Rp25rb", min: 0, max: 25000 },
+  { id: "25-50", label: "Rp25rb – Rp50rb", min: 25000, max: 50000 },
+  { id: "50-100", label: "Rp50rb – Rp100rb", min: 50000, max: 100000 },
+  { id: "gte100", label: "Rp100rb ke atas", min: 100000, max: Infinity },
+];
+
+const FilterSection = ({ title, children }) => (
+  <fieldset className="border-b border-blush-soft pb-5 last:border-0">
+    <legend className="mb-3 font-heading text-lg font-semibold">{title}</legend>
+    {children}
+  </fieldset>
+);
 
 const Shop = () => {
-  const dispatch = useDispatch();
-  const { categories, products, checked, radio } = useSelector(
-    (state) => state.shop
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [brand, setBrand] = useState("");
+  const [priceRangeId, setPriceRangeId] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
+  const { data: categories } = useFetchCategoriesQuery();
+  const {
+    data: products,
+    isLoading,
+    isFetching,
+    error,
+  } = useGetFilteredProductsQuery({ checked: selectedCategories, radio: [] });
+
+  const brands = useMemo(
+    () => [...new Set(products?.map((p) => p.brand).filter(Boolean))],
+    [products]
   );
+  const activeBrand = brands.includes(brand) ? brand : "";
 
-  const categoriesQuery = useFetchCategoriesQuery();
-  const [priceFilter, setPriceFilter] = useState("");
-
-  const filteredProductsQuery = useGetFilteredProductsQuery({
-    checked,
-    radio,
-  });
-
-  useEffect(() => {
-    if (!categoriesQuery.isLoading) {
-      dispatch(setCategories(categoriesQuery.data));
-    }
-  }, [categoriesQuery.data, dispatch]);
-
-  useEffect(() => {
-    if (!checked.length || !radio.length) {
-      if (!filteredProductsQuery.isLoading) {
-        // Filter products based on both checked categories and price filter
-        const filteredProducts = filteredProductsQuery.data.filter(
-          (product) => {
-            // Check if the product price includes the entered price filter value
-            return (
-              product.price.toString().includes(priceFilter) ||
-              product.price === parseInt(priceFilter.replace(/\./g, ""), 10)
-            );
-          }
-        );
-
-        dispatch(setProducts(filteredProducts));
-      }
-    }
-  }, [checked, radio, filteredProductsQuery.data, dispatch, priceFilter]);
-
-  const handleBrandClick = (brand) => {
-    const productsByBrand = filteredProductsQuery.data?.filter(
-      (product) => product.brand === brand
+  const visibleProducts = useMemo(() => {
+    const range = PRICE_RANGES.find((r) => r.id === priceRangeId);
+    return (products ?? []).filter(
+      (p) =>
+        (!activeBrand || p.brand === activeBrand) &&
+        (!range || (p.price >= range.min && p.price < range.max))
     );
-    dispatch(setProducts(productsByBrand));
+  }, [products, activeBrand, priceRangeId]);
+
+  const activeFilterCount =
+    selectedCategories.length + (activeBrand ? 1 : 0) + (priceRangeId ? 1 : 0);
+
+  const toggleCategory = (id) => {
+    setSelectedCategories((current) =>
+      current.includes(id) ? current.filter((c) => c !== id) : [...current, id]
+    );
   };
 
-  const handleCheck = (value, id) => {
-    const updatedChecked = value
-      ? [...checked, id]
-      : checked.filter((c) => c !== id);
-    dispatch(setChecked(updatedChecked));
-  };
-
-  const uniqueBrands = [
-    ...Array.from(
-      new Set(
-        filteredProductsQuery.data
-          ?.map((product) => product.brand)
-          .filter((brand) => brand !== undefined)
-      )
-    ),
-  ];
-
-  const formatNumber = (number) => {
-    return number.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  };
-
-  const handlePriceChange = (e) => {
-    const value = e.target.value;
-    const formattedValue = formatNumber(value);
-    setPriceFilter(formattedValue);
+  const resetFilters = () => {
+    setSelectedCategories([]);
+    setBrand("");
+    setPriceRangeId("");
   };
 
   return (
-    <>
-      <div className="container mx-auto flex flex-col md:flex-row">
-        <div className="bg-[#faa4a2] p-2 mt-2 mb-2 rounded md:p-3 md:mt-0">
-          <h2 className="h4 text-center py-2 bg-white rounded-full mb-2">
-            Filter berdasarkan Kategori
-          </h2>
+    <div className="container-page">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="section-title">Belanja</h1>
+          <p className="mt-1 text-cocoa-light">
+            {isLoading ? "Memuat produk…" : `${visibleProducts.length} produk ditemukan`}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setFiltersOpen(!filtersOpen)}
+          aria-expanded={filtersOpen}
+          aria-controls="shop-filters"
+          className="btn-outline md:hidden"
+        >
+          <AiOutlineFilter size={18} />
+          Filter{activeFilterCount > 0 && ` (${activeFilterCount})`}
+        </button>
+      </div>
 
-          <div className="p-5 w-[15rem]">
-            {categories?.map((c) => (
-              <div key={c._id} className="mb-2">
-                <label className="flex items-center mr-4">
-                  <input
-                    type="checkbox"
-                    id={`checkbox-${c._id}`}
-                    onChange={(e) => handleCheck(e.target.checked, c._id)}
-                    className="w-5 h-5 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <span
-                    htmlFor={`checkbox-${c._id}`}
-                    className="ml-2 text-sm font-medium text-black dark:text-gray-300 cursor-pointer"
-                  >
+      <div className="flex flex-col gap-6 md:flex-row md:items-start">
+        <aside
+          id="shop-filters"
+          className={`${filtersOpen ? "flex" : "hidden"} card flex-col gap-5 p-5 md:sticky md:top-24 md:flex md:w-64 md:shrink-0`}
+        >
+          <FilterSection title="Kategori">
+            {categories?.length ? (
+              <div className="space-y-2">
+                {categories.map((c) => (
+                  <label key={c._id} className="flex cursor-pointer items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedCategories.includes(c._id)}
+                      onChange={() => toggleCategory(c._id)}
+                      className="h-4 w-4 rounded border-blush text-orange-700 focus:ring-orange-400"
+                    />
                     {c.name}
-                  </span>
-                </label>
+                  </label>
+                ))}
               </div>
-            ))}
-          </div>
+            ) : (
+              <p className="text-sm text-cocoa-light">Belum ada kategori.</p>
+            )}
+          </FilterSection>
 
-          <h2 className="h4 text-center py-2 bg-white rounded-full mb-2">
-            Filter berdasarkan Merk
-          </h2>
-
-          <div className="p-5">
-            {uniqueBrands?.map((brand) => (
-              <div key={brand} className="flex items-center mr-4 mb-5">
-                <label className="flex items-center">
+          <FilterSection title="Merk">
+            <div className="space-y-2">
+              {["", ...brands].map((b) => (
+                <label key={b || "all"} className="flex cursor-pointer items-center gap-3">
                   <input
                     type="radio"
-                    id={`radio-${brand}`}
                     name="brand"
-                    onChange={() => handleBrandClick(brand)}
-                    className="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 focus:ring-orange-500 dark:focus:ring-orange-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    checked={activeBrand === b}
+                    onChange={() => setBrand(b)}
+                    className="h-4 w-4 border-blush text-orange-700 focus:ring-orange-400"
                   />
-                  <span
-                    htmlFor={`radio-${brand}`}
-                    className="ml-2 text-sm font-medium text-black dark:text-gray-300 cursor-pointer"
-                  >
-                    {brand}
-                  </span>
+                  {b || "Semua merk"}
                 </label>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </FilterSection>
 
-          <h2 className="h4 text-center py-2 bg-white rounded-full mb-2">
-            Filter berdasarkan Harga
-          </h2>
+          <FilterSection title="Harga">
+            <div className="flex flex-wrap gap-2">
+              {PRICE_RANGES.map((r) => {
+                const selected = priceRangeId === r.id;
+                return (
+                  <button
+                    key={r.id}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => setPriceRangeId(selected ? "" : r.id)}
+                    className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${
+                      selected
+                        ? "border-orange-700 bg-orange-700 text-white"
+                        : "border-blush bg-white hover:bg-blush-light"
+                    }`}
+                  >
+                    {r.label}
+                  </button>
+                );
+              })}
+            </div>
+          </FilterSection>
 
-          <div className="p-5 w-[15rem]">
-            <input
-              type="text"
-              placeholder="Masukkan Harga"
-              value={priceFilter}
-              onChange={handlePriceChange}
-              className="w-full px-3 py-2 placeholder-gray-400 border rounded-lg focus:outline-none focus:ring focus:border-orange-300"
-            />
-          </div>
+          <button
+            type="button"
+            onClick={resetFilters}
+            disabled={activeFilterCount === 0}
+            className="btn-outline w-full"
+          >
+            Reset filter
+          </button>
+        </aside>
 
-          <div className="p-5 pt-0">
-            <button
-              className="w-full my-4 bg-orange-600 hover:bg-orange-700 text-white rounded-full text-lg py-3"
-              onClick={() => window.location.reload()}
+        <section className="min-w-0 flex-1">
+          {isLoading ? (
+            <Loader />
+          ) : error ? (
+            <Message variant="danger">
+              {error?.data?.message || error?.data?.error || error.error}
+            </Message>
+          ) : visibleProducts.length === 0 ? (
+            <div className="card flex flex-col items-center gap-3 px-6 py-12 text-center">
+              <FaCookieBite size={40} className="text-blush" />
+              <h2 className="font-heading text-xl font-semibold">Produk tidak ditemukan</h2>
+              <p className="text-cocoa-light">Coba ubah atau reset filter kamu.</p>
+              {activeFilterCount > 0 && (
+                <button type="button" onClick={resetFilters} className="btn-primary mt-2">
+                  Reset filter
+                </button>
+              )}
+            </div>
+          ) : (
+            <div
+              className={`grid grid-cols-2 gap-4 transition-opacity md:gap-6 lg:grid-cols-3 ${
+                isFetching ? "opacity-60" : ""
+              }`}
             >
-              Reset
-            </button>
-          </div>
-        </div>
-
-        <div className="p-2 md:p-3">
-          <h2 className="h4 text-center mb-2 font-bold">
-            {products?.length} Produk
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.length === 0 ? (
-              <Loader />
-            ) : (
-              products?.map((p) => <ProductCard key={p._id} p={p} />)
-            )}
-          </div>
-        </div>
+              {visibleProducts.map((p) => (
+                <Product key={p._id} product={p} />
+              ))}
+            </div>
+          )}
+        </section>
       </div>
-    </>
+    </div>
   );
 };
 

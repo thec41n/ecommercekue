@@ -1,16 +1,13 @@
-const Message = ({ variant, children }) => {
-  const getVariantClass = () => {
-    switch (variant) {
-      case "succcess":
-        return "bg-green-100 text-green-800";
-      case "error":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-yellow-100 text-yellow-800";
-    }
-  };
+const variantClasses = {
+  success: "bg-green-50 text-green-800 ring-green-200",
+  danger: "bg-red-50 text-red-800 ring-red-200",
+  info: "bg-sky-50 text-sky-800 ring-sky-200",
+};
 
-  return <div className={`p-4 rounded ${getVariantClass()}`}>{children}</div>;
+const Message = ({ variant, children }) => {
+  const classes = variantClasses[variant] ?? "bg-amber-50 text-amber-800 ring-amber-200";
+
+  return <div className={`rounded-xl p-4 ring-1 ${classes}`}>{children}</div>;
 };
 
 export default Message;
